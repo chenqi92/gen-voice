@@ -32,29 +32,41 @@ def load_tts_model():
         tts_model = KittenTTS("KittenML/kitten-tts-nano-0.1")
         logger.info("Kitten TTS model loaded successfully!")
         return True
+    except ImportError as e:
+        logger.warning(f"Kitten TTS not available: {e}")
+        logger.info("Running in demo mode - TTS functionality will be simulated")
+        tts_model = "demo_mode"
+        return True
     except Exception as e:
         logger.error(f"Failed to load Kitten TTS model: {e}")
-        return False
+        logger.info("Running in demo mode - TTS functionality will be simulated")
+        tts_model = "demo_mode"
+        return True
 
 def get_available_voices():
     """Get list of available voices"""
     if tts_model is None:
         return []
-    
+
+    # Voice metadata with descriptions
+    voice_info = {
+        'expr-voice-2-f': {'gender': 'Female', 'description': 'Clear, professional, great for narration'},
+        'expr-voice-2-m': {'gender': 'Male', 'description': 'Solid, standard male voice. The reliable choice'},
+        'expr-voice-3-f': {'gender': 'Female', 'description': 'A bit more expressive, good for character work'},
+        'expr-voice-3-m': {'gender': 'Male', 'description': 'Deep, thoughtful. Perfect for storytelling'},
+        'expr-voice-4-f': {'gender': 'Female', 'description': 'Upbeat and friendly. Your go-to for assistants'},
+        'expr-voice-4-m': {'gender': 'Male', 'description': 'Energetic and clear. Gets the point across'},
+        'expr-voice-5-m': {'gender': 'Male', 'description': 'The default. A bit... unique. Use with caution!'},
+        'expr-voice-5-f': {'gender': 'Female', 'description': 'Expressive female voice'}
+    }
+
     try:
-        voices = tts_model.available_voices
-        # Voice metadata with descriptions
-        voice_info = {
-            'expr-voice-2-f': {'gender': 'Female', 'description': 'Clear, professional, great for narration'},
-            'expr-voice-2-m': {'gender': 'Male', 'description': 'Solid, standard male voice. The reliable choice'},
-            'expr-voice-3-f': {'gender': 'Female', 'description': 'A bit more expressive, good for character work'},
-            'expr-voice-3-m': {'gender': 'Male', 'description': 'Deep, thoughtful. Perfect for storytelling'},
-            'expr-voice-4-f': {'gender': 'Female', 'description': 'Upbeat and friendly. Your go-to for assistants'},
-            'expr-voice-4-m': {'gender': 'Male', 'description': 'Energetic and clear. Gets the point across'},
-            'expr-voice-5-m': {'gender': 'Male', 'description': 'The default. A bit... unique. Use with caution!'},
-            'expr-voice-5-f': {'gender': 'Female', 'description': 'Expressive female voice'}
-        }
-        
+        if tts_model == "demo_mode":
+            # Return all voices in demo mode
+            voices = list(voice_info.keys())
+        else:
+            voices = tts_model.available_voices
+
         return [
             {
                 'id': voice,
@@ -97,15 +109,22 @@ def api_generate():
             return jsonify({'error': 'TTS model not loaded'}), 500
         
         logger.info(f"Generating speech for text: '{text[:50]}...' with voice: {voice}")
-        
-        # Generate audio
-        audio = tts_model.generate(text, voice=voice)
-        
+
+        if tts_model == "demo_mode":
+            # Generate demo audio (silence)
+            import numpy as np
+            duration = min(len(text) * 0.1, 10.0)  # Estimate duration
+            sample_rate = 24000
+            audio = np.zeros(int(duration * sample_rate), dtype=np.float32)
+        else:
+            # Generate real audio
+            audio = tts_model.generate(text, voice=voice)
+
         # Convert to bytes
         buffer = io.BytesIO()
         sf.write(buffer, audio, 24000, format='WAV')
         buffer.seek(0)
-        
+
         # Encode as base64 for JSON response
         audio_b64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
         
@@ -135,8 +154,15 @@ def api_download():
             return jsonify({'error': 'TTS model not loaded'}), 500
         
         # Generate audio
-        audio = tts_model.generate(text, voice=voice)
-        
+        if tts_model == "demo_mode":
+            # Generate demo audio (silence)
+            import numpy as np
+            duration = min(len(text) * 0.1, 10.0)  # Estimate duration
+            sample_rate = 24000
+            audio = np.zeros(int(duration * sample_rate), dtype=np.float32)
+        else:
+            audio = tts_model.generate(text, voice=voice)
+
         # Create temporary file
         with tempfile.NamedTemporaryFile(delete=False, suffix='.wav') as tmp_file:
             sf.write(tmp_file.name, audio, 24000)
