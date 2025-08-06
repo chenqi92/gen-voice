@@ -26,6 +26,9 @@ class KittenTTSApp {
         this.progressText = document.getElementById('progress-text');
         this.audioContainer = document.getElementById('audio-container');
         this.audioPlayer = document.getElementById('audio-player');
+        this.importBtn = document.getElementById('import-btn');
+        this.fileInput = document.getElementById('file-input');
+        this.clearBtn = document.getElementById('clear-btn');
     }
 
     setupEventListeners() {
@@ -44,6 +47,21 @@ class KittenTTSApp {
         // Download button
         this.downloadBtn.addEventListener('click', () => {
             this.downloadAudio();
+        });
+
+        // Import button
+        this.importBtn.addEventListener('click', () => {
+            this.fileInput.click();
+        });
+
+        // File input
+        this.fileInput.addEventListener('change', (e) => {
+            this.handleFileImport(e);
+        });
+
+        // Clear button
+        this.clearBtn.addEventListener('click', () => {
+            this.clearText();
         });
 
         // Enter key in text input
@@ -116,11 +134,58 @@ class KittenTTSApp {
         }
     }
 
+    handleFileImport(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Check file size (limit to 1MB)
+        if (file.size > 1024 * 1024) {
+            this.showError(window.i18n ? window.i18n.t('error-file-size') : 'File is too large');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const text = e.target.result;
+                this.textInput.value = text;
+                this.charCount.textContent = text.length;
+                this.updateGenerateButton();
+                this.showSuccess(window.i18n ? window.i18n.t('success-imported') : 'Text imported successfully!');
+            } catch (error) {
+                this.showError(window.i18n ? window.i18n.t('error-file-read') : 'Failed to read file');
+            }
+        };
+        reader.onerror = () => {
+            this.showError(window.i18n ? window.i18n.t('error-file-read') : 'Failed to read file');
+        };
+        reader.readAsText(file);
+
+        // Clear the file input
+        event.target.value = '';
+    }
+
+    clearText() {
+        this.textInput.value = '';
+        this.charCount.textContent = '0';
+        this.updateGenerateButton();
+
+        // Hide audio player if visible
+        this.audioContainer.style.display = 'none';
+        this.downloadBtn.disabled = true;
+
+        // Clear current audio
+        if (this.currentAudio) {
+            URL.revokeObjectURL(this.currentAudio.url);
+            this.currentAudio = null;
+        }
+    }
+
     updateGenerateButton() {
         const hasText = this.textInput.value.trim().length > 0;
         const hasVoice = this.selectedVoice !== null;
         const canGenerate = hasText && hasVoice && !this.isGenerating;
-        
+
         this.generateBtn.disabled = !canGenerate;
     }
 
@@ -172,18 +237,40 @@ class KittenTTSApp {
     }
 
     displayAudio(audioBase64) {
-        const audioBlob = this.base64ToBlob(audioBase64, 'audio/wav');
-        const audioUrl = URL.createObjectURL(audioBlob);
-        
-        this.audioPlayer.src = audioUrl;
-        this.audioContainer.style.display = 'block';
-        this.downloadBtn.disabled = false;
-        
-        // Store current audio data for download
-        this.currentAudio = {
-            blob: audioBlob,
-            url: audioUrl
-        };
+        try {
+            const audioBlob = this.base64ToBlob(audioBase64, 'audio/wav');
+            const audioUrl = URL.createObjectURL(audioBlob);
+
+            // Clean up previous audio URL
+            if (this.currentAudio && this.currentAudio.url) {
+                URL.revokeObjectURL(this.currentAudio.url);
+            }
+
+            // Set new audio source
+            this.audioPlayer.src = audioUrl;
+            this.audioPlayer.load(); // Force reload of audio element
+
+            // Show audio container
+            this.audioContainer.style.display = 'block';
+            this.downloadBtn.disabled = false;
+
+            // Store current audio data for download
+            this.currentAudio = {
+                blob: audioBlob,
+                url: audioUrl,
+                base64: audioBase64
+            };
+
+            // Auto-play the audio (with user gesture check)
+            this.audioPlayer.play().catch(e => {
+                console.log('Auto-play prevented:', e);
+                // This is normal - browsers require user interaction for auto-play
+            });
+
+        } catch (error) {
+            console.error('Error displaying audio:', error);
+            this.showError('Failed to display audio');
+        }
     }
 
     async downloadAudio() {
@@ -193,32 +280,26 @@ class KittenTTSApp {
         }
 
         try {
-            const text = this.textInput.value.trim();
-            
-            const response = await fetch('/api/download', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    text: text,
-                    voice: this.selectedVoice
-                })
-            });
+            // Use the current audio blob directly for download
+            const blob = this.currentAudio.blob;
+            const url = URL.createObjectURL(blob);
 
-            if (response.ok) {
-                const blob = await response.blob();
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `kitten_tts_${this.selectedVoice}.wav`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            } else {
-                throw new Error('Download failed');
-            }
+            // Create download link
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `kitten_tts_${this.selectedVoice}_${Date.now()}.wav`;
+            a.style.display = 'none';
+
+            // Trigger download
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            // Clean up URL
+            setTimeout(() => URL.revokeObjectURL(url), 100);
+
+            this.showSuccess('Audio downloaded successfully!');
+
         } catch (error) {
             console.error('Download error:', error);
             this.showError(window.i18n ? window.i18n.t('error-download') : 'Failed to download audio');

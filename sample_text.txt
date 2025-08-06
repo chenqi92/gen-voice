@@ -1,0 +1,22 @@
+Welcome to Kitten TTS - the revolutionary AI voice generation system!
+
+This is a sample text file that demonstrates the text import functionality. You can import any text file (.txt or .md) and the content will be automatically loaded into the text input area.
+
+Key features of Kitten TTS:
+- Ultra-lightweight: Only 25MB model size
+- CPU-only operation: No expensive GPUs required
+- Multiple voices: 8 different expressive voices to choose from
+- Real-time generation: Fast speech synthesis
+- Privacy-focused: All processing happens locally
+- Open source: Apache 2.0 license
+
+The interface now supports:
+✓ Large text input area for longer content
+✓ File import functionality for .txt and .md files
+✓ Improved navigation with fixed header
+✓ Compact voice selection
+✓ Enhanced footer with integrated features section
+✓ Better mobile responsiveness
+✓ Complete internationalization support
+
+Try importing this file and generating speech with different voices to experience the full capabilities of Kitten TTS!

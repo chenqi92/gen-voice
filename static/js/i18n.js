@@ -1,8 +1,12 @@
 // Internationalization (i18n) support
 const translations = {
     en: {
+        'nav-subtitle': 'High-quality AI voice generation',
         'input-title': 'Enter Your Text',
-        'input-placeholder': 'Type your text here... (max 1000 characters)',
+        'input-placeholder': 'Type your text here or import a text file...',
+        'import-btn': 'Import Text File',
+        'clear-btn': 'Clear',
+        'characters': 'characters',
         'voice-title': 'Choose Voice',
         'loading-voices': 'Loading voices...',
         'generate-btn': 'Generate Speech',
@@ -20,6 +24,7 @@ const translations = {
         'feature-opensource-desc': 'Apache 2.0 license for commercial and personal use',
         'feature-privacy-title': 'Privacy First',
         'feature-privacy-desc': 'All processing happens locally, no data sent to servers',
+        'footer-text': 'Built with ❤️ for the open source community.',
         'generating': 'Generating speech...',
         'error-empty-text': 'Please enter some text to generate speech.',
         'error-no-voice': 'Please select a voice.',
@@ -27,12 +32,19 @@ const translations = {
         'success-generated': 'Speech generated successfully!',
         'downloading': 'Preparing download...',
         'error-download': 'Failed to download audio. Please try again.',
+        'error-file-read': 'Failed to read file. Please try again.',
+        'error-file-size': 'File is too large. Please choose a smaller file.',
+        'success-imported': 'Text imported successfully!',
         'voice-female': 'Female',
         'voice-male': 'Male'
     },
     zh: {
+        'nav-subtitle': '高质量AI语音生成',
         'input-title': '输入文本',
-        'input-placeholder': '在此输入您的文本... (最多1000个字符)',
+        'input-placeholder': '在此输入您的文本或导入文本文件...',
+        'import-btn': '导入文本文件',
+        'clear-btn': '清空',
+        'characters': '个字符',
         'voice-title': '选择声音',
         'loading-voices': '正在加载声音...',
         'generate-btn': '生成语音',
@@ -50,6 +62,7 @@ const translations = {
         'feature-opensource-desc': 'Apache 2.0许可证，支持商业和个人使用',
         'feature-privacy-title': '隐私优先',
         'feature-privacy-desc': '所有处理都在本地进行，不向服务器发送数据',
+        'footer-text': '用❤️为开源社区构建。',
         'generating': '正在生成语音...',
         'error-empty-text': '请输入一些文本来生成语音。',
         'error-no-voice': '请选择一个声音。',
@@ -57,6 +70,9 @@ const translations = {
         'success-generated': '语音生成成功！',
         'downloading': '正在准备下载...',
         'error-download': '下载音频失败，请重试。',
+        'error-file-read': '读取文件失败，请重试。',
+        'error-file-size': '文件过大，请选择较小的文件。',
+        'success-imported': '文本导入成功！',
         'voice-female': '女声',
         'voice-male': '男声'
     }

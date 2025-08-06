@@ -43,6 +43,61 @@ def load_tts_model():
         tts_model = "demo_mode"
         return True
 
+def generate_demo_audio(text, voice):
+    """Generate demo audio with tones that simulate speech"""
+    import numpy as np
+    duration = min(len(text) * 0.08, 8.0)  # Estimate duration based on text length
+    duration = max(duration, 1.0)  # Minimum 1 second
+    sample_rate = 24000
+
+    # Generate a simple tone pattern to simulate speech
+    t = np.linspace(0, duration, int(duration * sample_rate), False)
+
+    # Create a pattern of tones that varies based on voice selection
+    voice_freq_map = {
+        'expr-voice-2-f': 800,  # Higher pitch for female
+        'expr-voice-3-f': 750,
+        'expr-voice-4-f': 850,
+        'expr-voice-5-f': 780,
+        'expr-voice-2-m': 400,  # Lower pitch for male
+        'expr-voice-3-m': 350,
+        'expr-voice-4-m': 450,
+        'expr-voice-5-m': 380,
+    }
+
+    base_freq = voice_freq_map.get(voice, 600)
+
+    # Create a more speech-like pattern with varying frequency and amplitude
+    audio = np.zeros_like(t)
+
+    # Add multiple harmonics to make it sound more natural
+    for i, harmonic in enumerate([1, 0.5, 0.3, 0.2]):
+        freq_variation = np.sin(2 * np.pi * 0.5 * t) * 50  # Slow frequency modulation
+        freq = base_freq * (i + 1) + freq_variation
+        audio += harmonic * np.sin(2 * np.pi * freq * t)
+
+    # Add amplitude modulation to simulate speech rhythm
+    word_count = len(text.split())
+    rhythm_freq = max(word_count / duration / 4, 1.0)  # Rhythm based on word density
+    amplitude_mod = 0.7 + 0.3 * np.sin(2 * np.pi * rhythm_freq * t)
+    audio *= amplitude_mod
+
+    # Add some pauses for longer text
+    if duration > 3:
+        pause_positions = np.random.choice(len(audio), size=int(duration), replace=False)
+        for pos in pause_positions:
+            start = max(0, pos - sample_rate // 10)
+            end = min(len(audio), pos + sample_rate // 10)
+            audio[start:end] *= 0.1
+
+    # Normalize and apply fade in/out
+    audio = audio / np.max(np.abs(audio)) * 0.7
+    fade_samples = sample_rate // 20  # 50ms fade
+    audio[:fade_samples] *= np.linspace(0, 1, fade_samples)
+    audio[-fade_samples:] *= np.linspace(1, 0, fade_samples)
+
+    return audio.astype(np.float32)
+
 def get_available_voices():
     """Get list of available voices"""
     if tts_model is None:
@@ -102,8 +157,9 @@ def api_generate():
         if not text:
             return jsonify({'error': 'Text is required'}), 400
         
-        if len(text) > 1000:
-            return jsonify({'error': 'Text too long (max 1000 characters)'}), 400
+        # Remove character limit - allow any reasonable length
+        if len(text) > 50000:  # 50k character limit for safety
+            return jsonify({'error': 'Text too long (max 50,000 characters)'}), 400
         
         if tts_model is None:
             return jsonify({'error': 'TTS model not loaded'}), 500
@@ -111,11 +167,8 @@ def api_generate():
         logger.info(f"Generating speech for text: '{text[:50]}...' with voice: {voice}")
 
         if tts_model == "demo_mode":
-            # Generate demo audio (silence)
-            import numpy as np
-            duration = min(len(text) * 0.1, 10.0)  # Estimate duration
-            sample_rate = 24000
-            audio = np.zeros(int(duration * sample_rate), dtype=np.float32)
+            # Generate demo audio with tones
+            audio = generate_demo_audio(text, voice)
         else:
             # Generate real audio
             audio = tts_model.generate(text, voice=voice)
@@ -155,11 +208,8 @@ def api_download():
         
         # Generate audio
         if tts_model == "demo_mode":
-            # Generate demo audio (silence)
-            import numpy as np
-            duration = min(len(text) * 0.1, 10.0)  # Estimate duration
-            sample_rate = 24000
-            audio = np.zeros(int(duration * sample_rate), dtype=np.float32)
+            # Generate demo audio with tones
+            audio = generate_demo_audio(text, voice)
         else:
             audio = tts_model.generate(text, voice=voice)
 
