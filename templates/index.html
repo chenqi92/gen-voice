@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kitten TTS - AI Voice Generation</title>
+    <title data-i18n="page-title">Enhanced TTS - AI Voice Generation</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
@@ -13,167 +13,191 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-brand">
-                <i class="fas fa-cat"></i>
-                <span>Kitten TTS</span>
+                <i class="fas fa-microphone-alt"></i>
+                <span data-i18n="app-title">Enhanced TTS</span>
             </div>
-            <div class="nav-items">
-                <span class="nav-subtitle" data-i18n="nav-subtitle">High-quality AI voice generation</span>
-                <div class="language-toggle">
-                    <button id="lang-en" class="lang-btn active">EN</button>
-                    <button id="lang-zh" class="lang-btn">中文</button>
-                </div>
+            <div class="nav-actions">
+                <button id="lang-toggle" class="btn btn-outline">
+                    <i class="fas fa-globe"></i>
+                    <span id="current-lang">EN</span>
+                </button>
+                <button id="toggle-sidebar-btn" class="btn btn-outline">
+                    <i class="fas fa-bars"></i>
+                    <span data-i18n="history">History</span>
+                </button>
             </div>
         </div>
     </nav>
 
-    <div class="container">
-
+    <!-- App Layout -->
+    <div class="app-layout">
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Text Input Section -->
-            <section class="input-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-edit"></i> <span data-i18n="input-title">Enter Your Text</span></h2>
-                    <div class="input-actions">
-                        <button id="import-btn" class="btn btn-outline">
-                            <i class="fas fa-file-import"></i>
-                            <span data-i18n="import-btn">Import Text File</span>
-                        </button>
-                        <input type="file" id="file-input" accept=".txt,.md" style="display: none;">
-                        <button id="clear-btn" class="btn btn-outline">
-                            <i class="fas fa-trash"></i>
-                            <span data-i18n="clear-btn">Clear</span>
-                        </button>
-                    </div>
-                </div>
-                <div class="input-container">
-                    <textarea
-                        id="text-input"
-                        placeholder="Type your text here or import a text file..."
-                        data-i18n-placeholder="input-placeholder"
-                        rows="12"
-                    ></textarea>
-                    <div class="char-counter">
-                        <span id="char-count">0</span> <span data-i18n="characters">characters</span>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Voice Selection Section -->
-            <section class="voice-section compact">
-                <div class="section-header">
-                    <h3><i class="fas fa-microphone"></i> <span data-i18n="voice-title">Choose Voice</span></h3>
-                </div>
-                <div class="voice-grid compact" id="voice-grid">
-                    <!-- Voices will be loaded dynamically -->
-                    <div class="loading-voices">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <span data-i18n="loading-voices">Loading voices...</span>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Generation Section -->
-            <section class="generation-section">
-                <div class="controls">
-                    <button id="generate-btn" class="btn btn-primary" disabled>
-                        <i class="fas fa-play"></i>
-                        <span data-i18n="generate-btn">Generate Speech</span>
-                    </button>
-                    <button id="download-btn" class="btn btn-secondary" disabled>
-                        <i class="fas fa-download"></i>
-                        <span data-i18n="download-btn">Download Audio</span>
-                    </button>
-                </div>
+            <div class="content-wrapper">
                 
-                <div class="progress-container" id="progress-container" style="display: none;">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progress-fill"></div>
+                <!-- TTS Engine Selection -->
+                <section class="engine-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-robot"></i> <span data-i18n="engine-title">TTS Engine</span></h2>
+                        <p class="section-description" data-i18n="engine-description">Choose your preferred text-to-speech engine</p>
                     </div>
-                    <div class="progress-text" id="progress-text">Generating...</div>
-                </div>
+                    <div class="engine-selector" id="engine-selector">
+                        <div class="loading-engines">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span data-i18n="loading-engines">Loading engines...</span>
+                        </div>
+                    </div>
+                </section>
 
-                <div class="audio-container" id="audio-container" style="display: none;">
-                    <audio id="audio-player" controls>
-                        Your browser does not support the audio element.
-                    </audio>
-                </div>
-            </section>
+                <!-- Voice Selection -->
+                <section class="voice-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-user-friends"></i> <span data-i18n="voice-title">Voice Selection</span></h2>
+                        <p class="section-description" data-i18n="voice-description">Select a voice that suits your needs</p>
+                    </div>
+                    <div class="voice-grid" id="voice-grid">
+                        <div class="loading-voices">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span data-i18n="loading-voices">Loading voices...</span>
+                        </div>
+                    </div>
+                </section>
 
+                <!-- Text Input -->
+                <section class="input-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-edit"></i> <span data-i18n="input-title">Text Input</span></h2>
+                        <p class="section-description" data-i18n="input-description">Enter the text you want to convert to speech</p>
+                    </div>
+                    <div class="input-container">
+                        <div class="textarea-wrapper">
+                            <textarea 
+                                id="text-input" 
+                                placeholder="Enter your text here..." 
+                                data-i18n-placeholder="input-placeholder"
+                                maxlength="5000"
+                                rows="6"></textarea>
+                            <div class="input-footer">
+                                <div class="char-counter">
+                                    <span id="char-count">0</span> / 5000
+                                </div>
+                                <div class="input-actions">
+                                    <button id="clear-btn" class="btn btn-outline">
+                                        <i class="fas fa-eraser"></i>
+                                        <span data-i18n="clear">Clear</span>
+                                    </button>
+                                    <button id="import-btn" class="btn btn-outline">
+                                        <i class="fas fa-file-import"></i>
+                                        <span data-i18n="import">Import</span>
+                                    </button>
+                                    <input type="file" id="file-input" accept=".txt,.md" style="display: none;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Generation Controls -->
+                <section class="controls-section">
+                    <div class="controls-container">
+                        <button id="generate-btn" class="btn btn-primary btn-large" disabled>
+                            <i class="fas fa-play"></i>
+                            <span data-i18n="generate">Generate Speech</span>
+                        </button>
+                        <button id="download-btn" class="btn btn-secondary" style="display: none;">
+                            <i class="fas fa-download"></i>
+                            <span data-i18n="download">Download</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Progress Bar -->
+                    <div id="progress-container" class="progress-container" style="display: none;">
+                        <div class="progress-bar">
+                            <div id="progress-fill" class="progress-fill"></div>
+                        </div>
+                        <div id="progress-text" class="progress-text">Generating...</div>
+                    </div>
+                </section>
+
+                <!-- Audio Player -->
+                <section class="audio-section" id="audio-container" style="display: none;">
+                    <div class="section-header">
+                        <h2><i class="fas fa-volume-up"></i> <span data-i18n="audio-title">Generated Audio</span></h2>
+                    </div>
+                    <div class="audio-player-container">
+                        <audio id="audio-player" controls preload="none">
+                            <span data-i18n="audio-not-supported">Your browser does not support the audio element.</span>
+                        </audio>
+                    </div>
+                </section>
+
+            </div>
         </main>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-history"></i> <span data-i18n="history-title">History</span></h3>
+                <button id="close-sidebar-btn" class="btn btn-sm btn-outline">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="sidebar-content">
+                <div class="history-stats" id="history-stats">
+                    <div class="stat-item">
+                        <span class="stat-label" data-i18n="total-files">Total Files:</span>
+                        <span class="stat-value" id="total-files">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label" data-i18n="total-size">Total Size:</span>
+                        <span class="stat-value" id="total-size">0 MB</span>
+                    </div>
+                </div>
+                <div class="sidebar-actions">
+                    <button id="refresh-history-btn" class="btn btn-sm btn-outline">
+                        <i class="fas fa-sync-alt"></i>
+                        <span data-i18n="refresh">Refresh</span>
+                    </button>
+                    <button id="clear-history-btn" class="btn btn-sm btn-danger">
+                        <i class="fas fa-trash"></i>
+                        <span data-i18n="clear-all">Clear All</span>
+                    </button>
+                </div>
+                <div class="history-list" id="history-list">
+                    <div class="loading-history">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span data-i18n="loading-history">Loading history...</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
-            <div class="features-section">
-                <h3><i class="fas fa-star"></i> <span data-i18n="features-title">Features</span></h3>
-                <div class="features-grid">
-                    <div class="feature-item">
-                        <i class="fas fa-microchip"></i>
-                        <div>
-                            <h4 data-i18n="feature-cpu-title">CPU Only</h4>
-                            <p data-i18n="feature-cpu-desc">Runs entirely on CPU without requiring expensive GPUs</p>
-                        </div>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-feather"></i>
-                        <div>
-                            <h4 data-i18n="feature-lightweight-title">Lightweight</h4>
-                            <p data-i18n="feature-lightweight-desc">Only 25MB model size with 15M parameters</p>
-                        </div>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-users"></i>
-                        <div>
-                            <h4 data-i18n="feature-voices-title">Multiple Voices</h4>
-                            <p data-i18n="feature-voices-desc">8 expressive voices with different characteristics</p>
-                        </div>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-bolt"></i>
-                        <div>
-                            <h4 data-i18n="feature-fast-title">Ultra Fast</h4>
-                            <p data-i18n="feature-fast-desc">Real-time speech generation for responsive applications</p>
-                        </div>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-code"></i>
-                        <div>
-                            <h4 data-i18n="feature-opensource-title">Open Source</h4>
-                            <p data-i18n="feature-opensource-desc">Apache 2.0 license for commercial and personal use</p>
-                        </div>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-shield-alt"></i>
-                        <div>
-                            <h4 data-i18n="feature-privacy-title">Privacy First</h4>
-                            <p data-i18n="feature-privacy-desc">All processing happens locally, no data sent to servers</p>
-                        </div>
-                    </div>
-                </div>
+            <div class="footer-section">
+                <h4 data-i18n="about-title">About Enhanced TTS</h4>
+                <p data-i18n="about-description">Advanced AI-powered text-to-speech system with multiple engines and voice options.</p>
             </div>
-
-            <div class="footer-links">
-                <a href="https://github.com/KittenML/KittenTTS" target="_blank">
-                    <i class="fab fa-github"></i> GitHub
-                </a>
-                <a href="https://huggingface.co/KittenML/kitten-tts-nano-0.1" target="_blank">
-                    <i class="fas fa-robot"></i> Hugging Face
-                </a>
-                <a href="https://discord.gg/upcyF5s6" target="_blank">
-                    <i class="fab fa-discord"></i> Discord
-                </a>
+            <div class="footer-section">
+                <h4 data-i18n="features-title">Features</h4>
+                <ul class="feature-list">
+                    <li data-i18n="feature-1">Multiple TTS Engines</li>
+                    <li data-i18n="feature-2">High-Quality Voices</li>
+                    <li data-i18n="feature-3">History Management</li>
+                    <li data-i18n="feature-4">Real-time Generation</li>
+                </ul>
             </div>
-
-            <div class="footer-text">
-                <p>&copy; 2025 Kitten TTS Web Interface. <span data-i18n="footer-text">Built with ❤️ for the open source community.</span></p>
+            <div class="footer-section">
+                <h4 data-i18n="support-title">Support</h4>
+                <p data-i18n="support-description">For technical support and feature requests, please contact our team.</p>
             </div>
         </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Enhanced TTS. <span data-i18n="rights-reserved">All rights reserved.</span></p>
+        </div>
     </footer>
-    </div>
-
-    <!-- Toast Notifications -->
-    <div id="toast-container"></div>
 
     <!-- Scripts -->
     <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>

@@ -1,0 +1,68 @@
+[
+  {
+    "id": "f04b5b25-fe2b-4d7f-9874-11d88800d0fd",
+    "text": "1234",
+    "full_text": "1234",
+    "voice": "ljspeech",
+    "model_type": "coqui",
+    "filename": "f04b5b25-fe2b-4d7f-9874-11d88800d0fd.wav",
+    "filepath": "audio_history\\f04b5b25-fe2b-4d7f-9874-11d88800d0fd.wav",
+    "timestamp": "2025-08-06T17:54:38.522760",
+    "size": 14156
+  },
+  {
+    "id": "ef7b854b-446b-497c-b56a-dfd19f07c42d",
+    "text": "Testing Kitten TTS lightweight AI model",
+    "full_text": "Testing Kitten TTS lightweight AI model",
+    "voice": "kitten-voice-1",
+    "model_type": "kitten",
+    "filename": "ef7b854b-446b-497c-b56a-dfd19f07c42d.wav",
+    "filepath": "audio_history\\ef7b854b-446b-497c-b56a-dfd19f07c42d.wav",
+    "timestamp": "2025-08-06T17:52:38.696388",
+    "size": 131084
+  },
+  {
+    "id": "d17a1acd-58d9-4be3-b629-23337f22d0a3",
+    "text": "Testing Coqui TTS with neural voice synthesis",
+    "full_text": "Testing Coqui TTS with neural voice synthesis",
+    "voice": "ljspeech",
+    "model_type": "coqui",
+    "filename": "d17a1acd-58d9-4be3-b629-23337f22d0a3.wav",
+    "filepath": "audio_history\\d17a1acd-58d9-4be3-b629-23337f22d0a3.wav",
+    "timestamp": "2025-08-06T17:52:37.643801",
+    "size": 158804
+  },
+  {
+    "id": "740a3249-845a-4a81-a3c0-a0a2f70f91c5",
+    "text": "Testing Google TTS with real online synthesis",
+    "full_text": "Testing Google TTS with real online synthesis",
+    "voice": "en-us-standard",
+    "model_type": "google",
+    "filename": "740a3249-845a-4a81-a3c0-a0a2f70f91c5.wav",
+    "filepath": "audio_history\\740a3249-845a-4a81-a3c0-a0a2f70f91c5.wav",
+    "timestamp": "2025-08-06T17:52:36.620530",
+    "size": 364918
+  },
+  {
+    "id": "362cc973-8e0b-4bf8-bca6-dad99bb2aef1",
+    "text": "Testing Kitten TTS lightweight AI voice model",
+    "full_text": "Testing Kitten TTS lightweight AI voice model",
+    "voice": "kitten-voice-1",
+    "model_type": "kitten",
+    "filename": "362cc973-8e0b-4bf8-bca6-dad99bb2aef1.wav",
+    "filepath": "audio_history\\362cc973-8e0b-4bf8-bca6-dad99bb2aef1.wav",
+    "timestamp": "2025-08-06T17:51:10.794714",
+    "size": 151244
+  },
+  {
+    "id": "a7f362c4-302b-497d-9926-0d2c14fbe9ed",
+    "text": "Testing Coqui TTS with high-quality neural voice synthesis",
+    "full_text": "Testing Coqui TTS with high-quality neural voice synthesis",
+    "voice": "ljspeech",
+    "model_type": "coqui",
+    "filename": "a7f362c4-302b-497d-9926-0d2c14fbe9ed.wav",
+    "filepath": "audio_history\\a7f362c4-302b-497d-9926-0d2c14fbe9ed.wav",
+    "timestamp": "2025-08-06T17:50:35.752505",
+    "size": 204668
+  }
+]

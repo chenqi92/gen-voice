@@ -156,3 +156,5 @@ logs/
 # Temporary files
 tmp/
 temp/
+
+kitten_tts_test/
